@@ -7,38 +7,38 @@
 
 #include <iostream>
 #include <vector>
-#include "bilety/Bilet.h"
+#include "bilety/Ticket.h"
 
 using namespace std;
 template <class T>
-class BazaDanych {
+class Database {
 public:
     int size(){
-        return lista.size();
+        return list.size();
     };
     void operator += (T bilet)
     {
-        lista.push_back(bilet);
+        list.push_back(bilet);
     }
     void operator -= (int id)
     {
-        for(int i = 0; i<lista.size();i++){
-            if(((T)lista[i]).getId() == id){
-                lista.erase(lista.begin() + i);
+        for(int i = 0; i<list.size();i++){
+            if(((T)list[i]).getId() == id){
+                list.erase(list.begin() + i);
                 break;
             }
         }
     }
     void pokaInfo(){
         for(int i = 0; i < size(); i++){
-            lista[i].pokaInfo();
+            list[i].showInfo();
         }
     }
     T get(int i){
-        return lista[i];
+        return list[i];
     }
 private:
-    vector<T> lista;
+    vector<T> list;
 
 };
 

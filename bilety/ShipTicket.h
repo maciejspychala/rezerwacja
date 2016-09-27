@@ -7,14 +7,14 @@
 
 
 #include <stdio.h>
-#include "Bilet.h"
+#include "Ticket.h"
 
-class BiletMorski : public Bilet {
+class ShipTicket : public Ticket {
 
 public:
-    virtual void generuj() override;
+    virtual void generate() override;
 
-    virtual void pokaInfo() override;
+    virtual void showInfo() override;
 };
 
 

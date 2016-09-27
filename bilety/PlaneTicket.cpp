@@ -3,9 +3,10 @@
 //
 
 #include <stdlib.h>
-#include "BiletMorski.h"
+#include <stdio.h>
+#include "PlaneTicket.h"
 
-void BiletMorski::generuj() {
+void PlaneTicket::generate() {
     int a = rand() % 7;
     int b = rand() % 7;
     if (b == a) {
@@ -15,13 +16,14 @@ void BiletMorski::generuj() {
             ++b;
         }
     }
-    poczatek = porty[a];
-    koniec = porty[b];
+    beginning = airports[a];
+    ending = airports[b];
 }
 
-void BiletMorski::pokaInfo() {
+void PlaneTicket::showInfo() {
     if(id!=0){
         printf("id: %d ",id);
     }
-    printf("z: %s -> prom -> do:%s\n", poczatek.c_str(), koniec.c_str());
+    printf("from: %s -> airplane -> to: %s\n", beginning.c_str(), ending.c_str());
+
 }

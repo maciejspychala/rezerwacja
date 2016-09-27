@@ -5,14 +5,14 @@
 #ifndef HELLOWORLD_BILETPOWIETRZNY_H
 #define HELLOWORLD_BILETPOWIETRZNY_H
 
-#include "Bilet.h"
+#include "Ticket.h"
 
-class BiletPowietrzny : public Bilet {
+class PlaneTicket : public Ticket {
 
 public:
-    virtual void generuj() override;
+    virtual void generate() override;
 
-    virtual void pokaInfo() override;
+    virtual void showInfo() override;
 };
 
 

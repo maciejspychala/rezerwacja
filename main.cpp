@@ -1,178 +1,175 @@
 #include <iostream>
-#include <stdio.h>
-#include <time.h>
-#include <stdlib.h>
 #include <fstream>
-#include "bilety/BiletMieszany.h"
-#include "bilety/BiletMorski.h"
-#include "BazaDanych.h"
-#include "bilety/BiletPowietrzny.h"
+#include "bilety/MixedTicket.h"
+#include "bilety/ShipTicket.h"
+#include "Database.h"
+#include "bilety/PlaneTicket.h"
 
 
 using namespace std;
-BazaDanych<BiletPowietrzny> bazaPowietrzna;
-BazaDanych<BiletMorski> bazaMorska;
-BazaDanych<BiletMieszany> bazaMieszana;
+Database<PlaneTicket> planeData;
+Database<ShipTicket> shipData;
+Database<MixedTicket> mixedData;
 int id = 236235;
 
-void rezerwuj();
+void book();
 
-void zapisz();
+void save();
 
-void wczytaj();
+void load();
 
-void pokaMenu();
+void showMenu();
 
-void zapisz() {
-    fstream plik("save.xd", ios::out);
-    if (plik.good()) {
-        plik << id << endl;
-        plik << bazaPowietrzna.size() << '\n';
-        for (int j = 0; j < bazaPowietrzna.size(); j++) {
-            BiletPowietrzny c = bazaPowietrzna.get(j);
-            plik << c;
+void save() {
+    fstream file("save.xd", ios::out);
+    if (file.good()) {
+        file << id << endl;
+        file << planeData.size() << '\n';
+        for (int j = 0; j < planeData.size(); j++) {
+            PlaneTicket c = planeData.get(j);
+            file << c;
         }
-        plik << bazaMorska.size() << '\n';
-        for (int j = 0; j < bazaMorska.size(); j++) {
-            BiletMorski c = bazaMorska.get(j);
-            plik << c;
+        file << shipData.size() << '\n';
+        for (int j = 0; j < shipData.size(); j++) {
+            ShipTicket c = shipData.get(j);
+            file << c;
         }
-        plik << bazaMieszana.size() << '\n';
-        for (int j = 0; j < bazaMieszana.size(); j++) {
-            BiletMieszany c = bazaMieszana.get(j);
-            plik << c;
+        file << mixedData.size() << '\n';
+        for (int j = 0; j < mixedData.size(); j++) {
+            MixedTicket c = mixedData.get(j);
+            file << c;
         }
 
     }
-    plik.close();
+    file.close();
 }
 
-void pokaMenu() {
-    printf("[Z]arezerwuj podroz\n");
-    printf("[A]nuluj rezerwacje\n");
-    printf("[W]yswietl wszystkie rezerwacje\n");
-    printf("[K]oniec\n");
+void showMenu() {
+    printf("[B]ook travel\n");
+    printf("[C]ancel reservation\n");
+    printf("[S]how all reservation\n");
+    printf("[E]nd\n");
     char a;
     cin >> a;
     switch (a) {
-        case 'z' :
-        case 'Z' :
-            rezerwuj();
-            zapisz();
-            pokaMenu();
+        case 'b' :
+        case 'B' :
+            book();
+            save();
+            showMenu();
             break;
-        case 'a' :
-        case 'A' :
-            cout<<"Napisz id rezerwacji, ktora chcesz usunac: ";
+        case 'c' :
+        case 'C' :
+            cout << "Write id you want to erase: ";
             int erase;
             cin >> erase;
-            bazaPowietrzna -= erase;
-            bazaMorska -= erase;
-            bazaMieszana -= erase;
+            planeData -= erase;
+            shipData -= erase;
+            mixedData -= erase;
             cout << endl;
-            zapisz();
-            pokaMenu();
+            save();
+            showMenu();
             break;
-        case 'w' :
-        case 'W' :
-            bazaPowietrzna.pokaInfo();
-            bazaMorska.pokaInfo();
-            bazaMieszana.pokaInfo();
-            pokaMenu();
+        case 's' :
+        case 'S' :
+            planeData.pokaInfo();
+            shipData.pokaInfo();
+            mixedData.pokaInfo();
+            showMenu();
             break;
-        case 'k' :
-        case 'K' :
+        case 'e' :
+        case 'E' :
             break;
         default:
-            printf("zla litera\n");
-            pokaMenu();
+            printf("Wrong letter\n");
+            showMenu();
             break;
     }
 }
 
-void rezerwuj() {
-    vector<BiletPowietrzny> powietrze;
-    vector<BiletMorski> woda;
-    vector<BiletMieszany> wszystko;
+void book() {
+    vector<PlaneTicket> air;
+    vector<ShipTicket> sea;
+    vector<MixedTicket> mixed;
     int j = 1;
     for (int i = 0; i < 3; i++) {
-        BiletPowietrzny a;
-        BiletMorski b;
-        BiletMieszany c;
-        a.generuj();
-        b.generuj();
-        c.generuj();
+        PlaneTicket a;
+        ShipTicket b;
+        MixedTicket c;
+        a.generate();
+        b.generate();
+        c.generate();
         cout << i + j++ << ". ";
-        a.pokaInfo();
+        a.showInfo();
         cout << i + j++ << ". ";
-        b.pokaInfo();
+        b.showInfo();
         cout << i + j << ". ";
-        c.pokaInfo();
-        powietrze.push_back(a);
-        woda.push_back(b);
-        wszystko.push_back(c);
+        c.showInfo();
+        air.push_back(a);
+        sea.push_back(b);
+        mixed.push_back(c);
     }
-    cout << "podaj numer, ktory chcesz zarezerwowac: ";
+    cout << "which id you want to book: ";
     int c;
     cin >> c;
     while (c > 9 || c < 1) {
-        cout << "podales zly numer, podaj jeszcze raz : ";
+        cout << "wrong id, write once again: ";
         cin >> c;
     }
     --c;
     switch (c % 3) {
         case 0 :
-            powietrze[c / 3].setId(id++);
-            bazaPowietrzna += powietrze[c / 3];
+            air[c / 3].setId(id++);
+            planeData += air[c / 3];
             break;
         case 1 :
-            woda[c / 3].setId(id++);
-            bazaMorska += woda[c / 3];
+            sea[c / 3].setId(id++);
+            shipData += sea[c / 3];
             break;
         case 2 :
-            wszystko[c / 3].setId(id++);
-            bazaMieszana += wszystko[c / 3];
+            mixed[c / 3].setId(id++);
+            mixedData += mixed[c / 3];
             break;
 
         default:
             break;
     }
-    zapisz();
+    save();
     cout << endl;
 }
 
-void wczytaj() {
-    BiletPowietrzny biletPowietrzny;
-    BiletMorski biletMorski;
-    BiletMieszany biletMieszany;
-    fstream plik("save.xd", ios::in);
+void load() {
+    PlaneTicket planeTi;
+    ShipTicket shipTicket;
+    MixedTicket mixedTicket;
+    fstream file("save.xd", ios::in);
     int i = 0;
-    if (plik.good()) {
-        plik >> id;
-        plik >> i;
+    if (file.good()) {
+        file >> id;
+        file >> i;
         for (int j = 0; j < i; j++) {
-            plik >> biletPowietrzny;
-            bazaPowietrzna += biletPowietrzny;
+            file >> planeTi;
+            planeData += planeTi;
         }
-        plik >> i;
+        file >> i;
         for (int j = 0; j < i; j++) {
-            plik >> biletMorski;
-            bazaMorska += biletMorski;
+            file >> shipTicket;
+            shipData += shipTicket;
         }
-        plik >> i;
+        file >> i;
         for (int j = 0; j < i; j++) {
-            plik >> biletMieszany;
-            bazaMieszana += biletMieszany;
+            file >> mixedTicket;
+            mixedData += mixedTicket;
         }
 
     }
-    plik.close();
+    file.close();
 }
 
 
 int main() {
     srand(time(NULL));
-    wczytaj();
-    pokaMenu();
+    load();
+    showMenu();
     return 0;
 }
